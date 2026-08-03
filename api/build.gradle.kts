@@ -7,13 +7,7 @@ plugins {
 group = "com.exon"
 version = "1.0.0"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(26)
-    }
-}
-
-// Target Java 21 bytecode format to maintain ASM/Spring Boot plugin compatibility
+// Target Java 21 bytecode format for Spring Boot & Docker compatibility
 tasks.withType<JavaCompile> {
     options.release.set(21)
 }
