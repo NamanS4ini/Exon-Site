@@ -13,6 +13,15 @@ java {
     }
 }
 
+// Target Java 21 bytecode format to maintain ASM/Spring Boot plugin compatibility
+tasks.withType<JavaCompile> {
+    options.release.set(21)
+}
+
+springBoot {
+    mainClass.set("com.exon.api.ExonApiApplication")
+}
+
 repositories {
     mavenCentral()
 }
