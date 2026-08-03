@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Zap, GitFork, ExternalLink } from "lucide-react";
+import Image from "next/image";
+import { GitFork, ExternalLink } from "lucide-react";
 
 export function Footer() {
   return (
@@ -35,21 +36,14 @@ export function Footer() {
                 marginBottom: "0.75rem",
               }}
             >
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: 26,
-                  height: 26,
-                  borderRadius: "var(--radius-sm)",
-                  background: "linear-gradient(135deg, #6366f1, #a78bfa)",
-                  color: "#fff",
-                }}
-              >
-                <Zap size={14} strokeWidth={2.5} fill="currentColor" />
-              </span>
-              <span className="gradient-text">Exon</span>
+              <Image
+                src="/icon.png"
+                alt="Exon logo"
+                width={24}
+                height={24}
+                style={{ borderRadius: "var(--radius-sm)", objectFit: "contain" }}
+              />
+              <span style={{ color: "var(--text-primary)", fontWeight: 700 }}>Exon</span>
             </Link>
             <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", lineHeight: 1.65 }}>
               A tree-walk interpreter written in Java. Built for learning compiler internals.
@@ -89,7 +83,7 @@ export function Footer() {
             </p>
             <nav aria-label="Footer project" style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
               <a
-                href="https://github.com/namansaini1463/exon-interpreter"
+                href="https://github.com/NamanS4ini/Exon-Site"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ fontSize: "0.875rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.3rem" }}
@@ -117,7 +111,7 @@ export function Footer() {
           <p style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
             Built by{" "}
             <a
-              href="https://github.com/namansaini1463"
+              href="https://github.com/NamanS4ini"
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "var(--text-brand)" }}
@@ -126,8 +120,8 @@ export function Footer() {
             </a>{" "}
             · MIT License
           </p>
-          <span className="badge badge-brand" style={{ fontSize: "0.7rem" }}>
-            <Zap size={10} fill="currentColor" />
+          <span className="badge badge-brand" style={{ fontSize: "0.7rem", gap: "0.3rem" }}>
+            <Image src="/icon.png" alt="" width={12} height={12} style={{ objectFit: "contain" }} />
             Exon v1.0
           </span>
         </div>

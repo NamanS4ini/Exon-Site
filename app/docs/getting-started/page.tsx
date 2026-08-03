@@ -55,7 +55,7 @@ export default function GettingStartedPage() {
 
       <Step n={1} icon={<Download size={16} />} title="Clone the repository">
         <CodeBlock
-          code={"git clone https://github.com/namansaini1463/exon-interpreter.git\ncd exon-interpreter"}
+          code={"git clone https://github.com/NamanS4ini/Exon-Site.git\ncd Exon-Site"}
           language="bash"
           highlight={false}
           filename="terminal"

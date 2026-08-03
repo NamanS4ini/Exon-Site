@@ -90,7 +90,7 @@ const STEPS = [
   {
     n: "01",
     title: "Clone the repo",
-    code: "git clone https://github.com/namansaini1463/exon-interpreter",
+    code: "git clone https://github.com/NamanS4ini/Exon-Site",
   },
   {
     n: "02",
@@ -117,22 +117,6 @@ export default function HomePage() {
           overflow: "hidden",
         }}
       >
-        {/* Background glow */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            top: "-20%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "800px",
-            height: "500px",
-            background:
-              "radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)",
-            pointerEvents: "none",
-          }}
-        />
-
         <div className="container" style={{ position: "relative" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }}>
             {/* Left: text */}
@@ -182,7 +166,7 @@ export default function HomePage() {
               style={{
                 borderRadius: "var(--radius-lg)",
                 overflow: "hidden",
-                boxShadow: "0 24px 80px rgba(0,0,0,0.6), 0 0 40px rgba(99,102,241,0.15)",
+                boxShadow: "var(--shadow-md)",
                 border: "1px solid var(--border-default)",
               }}
             >
@@ -374,7 +358,7 @@ export default function HomePage() {
                   <ArrowRight size={16} />
                 </Link>
                 <a
-                  href="https://github.com/namansaini1463/exon-interpreter"
+                  href="https://github.com/NamanS4ini/Exon-Site"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-secondary"
@@ -440,8 +424,7 @@ export default function HomePage() {
         style={{
           padding: "5rem 0",
           borderTop: "1px solid var(--border-subtle)",
-          background:
-            "linear-gradient(135deg, rgba(99,102,241,0.07) 0%, rgba(167,139,250,0.05) 100%)",
+          background: "var(--bg-surface)",
         }}
       >
         <div className="container" style={{ textAlign: "center" }}>

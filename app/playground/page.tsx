@@ -126,12 +126,34 @@ export default function PlaygroundPage() {
     }
   };
 
+  const [activeTab, setActiveTab] = useState<"output" | "ast">("output");
+  const [astOutput, setAstOutput] = useState<string>("");
+
+  const fetchAst = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/ast`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ source: code }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAstOutput(data.output || "(No AST generated)");
+      }
+    } catch (e) {
+      setAstOutput("(AST endpoint unavailable)");
+    }
+  };
+
   const handleRun = async () => {
     setIsRunning(true);
     setStatus("idle");
     setOutput("");
     setErrorDetails(null);
     const startTime = performance.now();
+
+    // Fetch AST concurrently
+    fetchAst();
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/run`, {
@@ -202,6 +224,7 @@ export default function PlaygroundPage() {
     const found = EXAMPLES.find((ex) => ex.id === selectedExample);
     if (found) setCode(found.code);
     setOutput("");
+    setAstOutput("");
     setErrorDetails(null);
     setStatus("idle");
   };
@@ -297,9 +320,13 @@ export default function PlaygroundPage() {
           <div style={{ flex: 1, minHeight: 0 }}>
             <Editor
               height="100%"
-              defaultLanguage="javascript"
+              defaultLanguage="exon"
+              language="exon"
               theme="vs-dark"
               value={code}
+              beforeMount={(monaco) => {
+                import("@/lib/exon-monaco").then((m) => m.registerExonLanguage(monaco));
+              }}
               onChange={(value) => setCode(value || "")}
               options={{
                 fontSize: 14,
@@ -316,24 +343,73 @@ export default function PlaygroundPage() {
 
         {/* Right: Output / Console */}
         <div style={{ display: "flex", flexDirection: "column", background: "var(--bg-base)" }}>
-          <div style={{ padding: "0.5rem 1rem", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)", fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-            <Terminal size={13} />
-            Output Terminal
+          {/* Tab Header */}
+          <div style={{ padding: "0.25rem 0.5rem", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)", display: "flex", gap: "0.25rem" }}>
+            <button
+              onClick={() => setActiveTab("output")}
+              style={{
+                padding: "0.3rem 0.75rem",
+                background: activeTab === "output" ? "var(--bg-base)" : "transparent",
+                border: "none",
+                borderRadius: "var(--radius-sm)",
+                color: activeTab === "output" ? "var(--text-primary)" : "var(--text-muted)",
+                fontSize: "0.75rem",
+                fontFamily: "var(--font-mono)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
+              }}
+            >
+              <Terminal size={12} />
+              Output Terminal
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("ast");
+                if (!astOutput) fetchAst();
+              }}
+              style={{
+                padding: "0.3rem 0.75rem",
+                background: activeTab === "ast" ? "var(--bg-base)" : "transparent",
+                border: "none",
+                borderRadius: "var(--radius-sm)",
+                color: activeTab === "ast" ? "var(--text-primary)" : "var(--text-muted)",
+                fontSize: "0.75rem",
+                fontFamily: "var(--font-mono)",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.35rem",
+              }}
+            >
+              <Zap size={12} />
+              AST Visualizer
+            </button>
           </div>
+
           <div style={{ flex: 1, padding: "1.25rem", overflowY: "auto", fontFamily: "var(--font-mono)", fontSize: "0.875rem", lineHeight: 1.75 }}>
-            {status === "idle" && !output && !errorDetails && (
-              <div style={{ color: "var(--text-muted)", fontStyle: "italic" }}>
-                Click &quot;Run Code&quot; to execute your Exon program.
-              </div>
-            )}
-            {output && (
-              <pre style={{ margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>
-                {output}
-              </pre>
-            )}
-            {errorDetails && (
-              <pre style={{ margin: "0.75rem 0 0", color: "#f87171", whiteSpace: "pre-wrap", background: "rgba(248,113,113,0.08)", padding: "0.875rem", borderRadius: "var(--radius-sm)", border: "1px solid rgba(248,113,113,0.2)" }}>
-                {errorDetails}
+            {activeTab === "output" ? (
+              <>
+                {status === "idle" && !output && !errorDetails && (
+                  <div style={{ color: "var(--text-muted)", fontStyle: "italic" }}>
+                    Click &quot;Run Code&quot; to execute your Exon program.
+                  </div>
+                )}
+                {output && (
+                  <pre style={{ margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>
+                    {output}
+                  </pre>
+                )}
+                {errorDetails && (
+                  <pre style={{ margin: "0.75rem 0 0", color: "#f87171", whiteSpace: "pre-wrap", background: "rgba(248,113,113,0.08)", padding: "0.875rem", borderRadius: "var(--radius-sm)", border: "1px solid rgba(248,113,113,0.2)" }}>
+                    {errorDetails}
+                  </pre>
+                )}
+              </>
+            ) : (
+              <pre style={{ margin: 0, color: "var(--text-brand)", whiteSpace: "pre-wrap" }}>
+                {astOutput || "Click Run Code or switch tabs to generate Abstract Syntax Tree."}
               </pre>
             )}
           </div>

@@ -1,0 +1,47 @@
+{
+  "name": "exon-vscode",
+  "displayName": "Exon Language Support",
+  "description": "Rich language support for Exon programming language: syntax highlighting, snippets, and bracket matching.",
+  "version": "1.0.0",
+  "publisher": "NamanS4ini",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "icon": "icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NamanS4ini/Exon-Site.git"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "exon",
+        "aliases": [
+          "Exon",
+          "exon"
+        ],
+        "extensions": [
+          ".exon"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "exon",
+        "scopeName": "source.exon",
+        "path": "./syntaxes/exon.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "exon",
+        "path": "./snippets/exon.code-snippets.json"
+      }
+    ]
+  }
+}

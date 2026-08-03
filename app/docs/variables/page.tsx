@@ -25,7 +25,10 @@ export default function VariablesPage() {
         code={`set name = "Exon";
 set version = 1;
 set active = true;
-set nothing = nil;`}
+
+out name;
+out version;
+out active;`}
         filename="variables.exon"
       />
       <p>

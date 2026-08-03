@@ -58,13 +58,40 @@ public class ExecutionService {
             long elapsed = System.currentTimeMillis() - wallStart;
             return RunResponse.timeout(elapsed);
         } catch (ExecutionException e) {
-            // Unexpected interpreter crash — wrap as runtime error
             long elapsed = System.currentTimeMillis() - wallStart;
             String msg = e.getCause() != null ? e.getCause().getMessage() : "Internal interpreter error.";
             return RunResponse.failure("", List.of(new ErrorDetail(0, msg, "RUNTIME")), elapsed);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return RunResponse.requestError("Request was interrupted.");
+            long elapsed = System.currentTimeMillis() - wallStart;
+            return RunResponse.failure("", List.of(new ErrorDetail(0, "Execution was interrupted.", "RUNTIME")), elapsed);
+        }
+    }
+
+    /**
+     * Parses the Exon program and returns its Abstract Syntax Tree representation.
+     */
+    public RunResponse executeAst(RunRequest request) {
+        long wallStart = System.currentTimeMillis();
+
+        Future<ExonResult> future = executor.submit(() ->
+                ExonEngine.ast(request.source()));
+
+        try {
+            ExonResult result = future.get(timeoutMs, TimeUnit.MILLISECONDS);
+            return toResponse(result);
+        } catch (TimeoutException e) {
+            future.cancel(true);
+            long elapsed = System.currentTimeMillis() - wallStart;
+            return RunResponse.timeout(elapsed);
+        } catch (ExecutionException e) {
+            long elapsed = System.currentTimeMillis() - wallStart;
+            String msg = e.getCause() != null ? e.getCause().getMessage() : "Internal interpreter error.";
+            return RunResponse.failure("", List.of(new ErrorDetail(0, msg, "RUNTIME")), elapsed);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            long elapsed = System.currentTimeMillis() - wallStart;
+            return RunResponse.failure("", List.of(new ErrorDetail(0, "Execution was interrupted.", "RUNTIME")), elapsed);
         }
     }
 

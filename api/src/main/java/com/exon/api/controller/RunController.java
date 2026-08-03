@@ -34,4 +34,13 @@ public class RunController {
         RunResponse response = executionService.execute(request);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * Parses the submitted Exon source code and returns its Abstract Syntax Tree (AST).
+     */
+    @PostMapping("/ast")
+    public ResponseEntity<RunResponse> ast(@Valid @RequestBody RunRequest request) {
+        RunResponse response = executionService.executeAst(request);
+        return ResponseEntity.ok(response);
+    }
 }

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmLanguage.json",
+  "name": "Exon",
+  "scopeName": "source.exon",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#builtins" },
+    { "include": "#operators" }
+  ],
+  "repository": {
+    "comments": {
+      "name": "comment.line.double-slash.exon",
+      "match": "//.*$"
+    },
+    "strings": {
+      "name": "string.quoted.double.exon",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.exon",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "numbers": {
+      "name": "constant.numeric.exon",
+      "match": "\\b[0-9]+(\\.[0-9]+)?\\b"
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.exon",
+          "match": "\\b(if|else|for|when|return)\\b"
+        },
+        {
+          "name": "keyword.declaration.exon",
+          "match": "\\b(set|fxn|class)\\b"
+        },
+        {
+          "name": "keyword.other.out.exon",
+          "match": "\\b(out)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.exon",
+          "match": "\\b(and|or)\\b"
+        },
+        {
+          "name": "constant.language.exon",
+          "match": "\\b(true|false|nil)\\b"
+        },
+        {
+          "name": "variable.language.exon",
+          "match": "\\b(this|super)\\b"
+        }
+      ]
+    },
+    "builtins": {
+      "name": "support.function.builtin.exon",
+      "match": "\\b(clock|len|str|type)\\b"
+    },
+    "operators": {
+      "name": "keyword.operator.exon",
+      "match": "(==|!=|<=|>=|<|>|=|!|\\+|\\-|\\*|\\/)"
+    }
+  }
+}

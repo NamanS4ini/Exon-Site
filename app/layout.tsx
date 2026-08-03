@@ -21,6 +21,11 @@ export const metadata: Metadata = {
     default: "Exon — The Programming Language",
     template: "%s | Exon",
   },
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
   description:
     "Exon is a dynamically-typed, tree-walk interpreted programming language written in Java. Featuring variables, functions, closures, classes, and inheritance.",
   keywords: ["Exon", "programming language", "interpreter", "Java", "compiler", "documentation"],

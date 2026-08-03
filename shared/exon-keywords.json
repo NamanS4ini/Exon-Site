@@ -1,0 +1,16 @@
+{
+  "keywords": {
+    "control_flow": ["if", "else", "for", "when", "return"],
+    "declaration": ["set", "fxn", "class"],
+    "output": ["out"],
+    "logical": ["and", "or"],
+    "literal": ["true", "false", "nil"],
+    "object": ["this", "super"]
+  },
+  "operators": ["+", "-", "*", "/", "=", "==", "!=", "<", ">", "<=", ">=", "!"],
+  "builtins": ["clock", "len", "str", "type"],
+  "comment_line": "//",
+  "string_delimiter": "\"",
+  "inheritance_operator": "<",
+  "file_extension": ".exon"
+}

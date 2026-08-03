@@ -58,15 +58,19 @@ public class ExamplesService {
             "FizzBuzz",
             "The classic FizzBuzz problem.",
             """
-            for (set i = 1; i <= 20; i = i + 1) {
-              if (i % 3 == 0 and i % 5 == 0) {
+            for (set i = 1; i <= 15; i = i + 1) {
+              if (i - (i / 15) * 15 == 0) {
                 out "FizzBuzz";
-              } else if (i % 3 == 0) {
-                out "Fizz";
-              } else if (i % 5 == 0) {
-                out "Buzz";
               } else {
-                out i;
+                if (i - (i / 3) * 3 == 0) {
+                  out "Fizz";
+                } else {
+                  if (i - (i / 5) * 5 == 0) {
+                    out "Buzz";
+                  } else {
+                    out i;
+                  }
+                }
               }
             }
             """

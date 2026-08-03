@@ -1,61 +1,54 @@
 package com.interpreter.exon;
 
-import com.interpreter.exon.Expr.Assign;
-import com.interpreter.exon.Expr.Call;
-import com.interpreter.exon.Expr.Get;
-import com.interpreter.exon.Expr.Logical;
-import com.interpreter.exon.Expr.Set;
-import com.interpreter.exon.Expr.Super;
-import com.interpreter.exon.Expr.This;
-import com.interpreter.exon.Expr.Variable;
+import java.util.List;
 
-class AstPrinter implements Expr.Visitor<String> {
+public class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     
-    String print(Expr expr) {
+    public String print(List<Stmt> statements) {
+        StringBuilder sb = new StringBuilder();
+        for (Stmt stmt : statements) {
+            sb.append(stmt.accept(this)).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    public String print(Expr expr) {
         return expr.accept(this);
     }
 
-    
     @Override
     public String visitBinaryExpr(Expr.Binary expr) {
         return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
 
-
     @Override
-    public String visitAssignExpr(Assign expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitAssignExpr(Expr.Assign expr) {
+        return parenthesize("= " + expr.name.lexeme, expr.value);
     }
 
     @Override
-    public String visitCallExpr(Call expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitCallExpr(Expr.Call expr) {
+        return parenthesize("call " + expr.callee.accept(this), expr.arguments.toArray(new Expr[0]));
     }
 
     @Override
-    public String visitVariableExpr(Variable expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitVariableExpr(Expr.Variable expr) {
+        return expr.name.lexeme;
     }
 
     @Override
-    public String visitLogicalExpr(Logical expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitLogicalExpr(Expr.Logical expr) {
+        return parenthesize(expr.operator.lexeme, expr.left, expr.right);
     }
 
     @Override
-    public String visitGetExpr(Get expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitGetExpr(Expr.Get expr) {
+        return "(get " + expr.object.accept(this) + " ." + expr.name.lexeme + ")";
     }
 
     @Override
-    public String visitSetExpr(Set expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitSetExpr(Expr.Set expr) {
+        return "(set-field " + expr.object.accept(this) + " ." + expr.name.lexeme + " " + expr.value.accept(this) + ")";
     }
 
     @Override
@@ -64,48 +57,95 @@ class AstPrinter implements Expr.Visitor<String> {
     }
 
     @Override
-    public String visitThisExpr(This expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitThisExpr(Expr.This expr) {
+        return "this";
     }
     
     @Override
-    public String visitSuperExpr(Super expr) {
-        // TODO Auto-generated method stub
-        return null;
+    public String visitSuperExpr(Expr.Super expr) {
+        return "(super " + expr.method.lexeme + ")";
     }
 
     @Override
     public String visitLiteralExpr(Expr.Literal expr) {
-        if (expr.value == null)
-            return "nil";
+        if (expr.value == null) return "nil";
         return expr.value.toString();
     }
-
 
     @Override
     public String visitUnaryExpr(Expr.Unary expr) {
         return parenthesize(expr.operator.lexeme, expr.right);
     }
 
+    // Statement visitors
+    @Override
+    public String visitBlockStmt(Stmt.Block stmt) {
+        StringBuilder builder = new StringBuilder("(block");
+        for (Stmt s : stmt.statements) {
+            builder.append(" ").append(s.accept(this));
+        }
+        builder.append(")");
+        return builder.toString();
+    }
+
+    @Override
+    public String visitClassStmt(Stmt.Class stmt) {
+        StringBuilder builder = new StringBuilder("(class ").append(stmt.name.lexeme);
+        if (stmt.superclass != null) {
+            builder.append(" < ").append(stmt.superclass.name.lexeme);
+        }
+        builder.append(")");
+        return builder.toString();
+    }
+
+    @Override
+    public String visitExpressionStmt(Stmt.Expression stmt) {
+        return stmt.expression.accept(this);
+    }
+
+    @Override
+    public String visitFunctionStmt(Stmt.Function stmt) {
+        return "(fxn " + stmt.name.lexeme + ")";
+    }
+
+    @Override
+    public String visitIfStmt(Stmt.If stmt) {
+        if (stmt.elseBranch == null) {
+            return "(if " + stmt.condition.accept(this) + " " + stmt.thenBranch.accept(this) + ")";
+        }
+        return "(if " + stmt.condition.accept(this) + " " + stmt.thenBranch.accept(this) + " " + stmt.elseBranch.accept(this) + ")";
+    }
+
+    @Override
+    public String visitOutStmt(Stmt.Out stmt) {
+        return "(out " + stmt.expression.accept(this) + ")";
+    }
+
+    @Override
+    public String visitReturnStmt(Stmt.Return stmt) {
+        if (stmt.value == null) return "(return)";
+        return "(return " + stmt.value.accept(this) + ")";
+    }
+
+    @Override
+    public String visitSetStmt(Stmt.Set stmt) {
+        if (stmt.initializer == null) return "(var " + stmt.name.lexeme + ")";
+        return "(var " + stmt.name.lexeme + " = " + stmt.initializer.accept(this) + ")";
+    }
+
+    @Override
+    public String visitWhenStmt(Stmt.When stmt) {
+        return "(when " + stmt.condition.accept(this) + " " + stmt.body.accept(this) + ")";
+    }
+
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
-
         builder.append("(").append(name);
         for (Expr expr : exprs) {
             builder.append(" ");
             builder.append(expr.accept(this));
         }
         builder.append(")");
-
         return builder.toString();
     }
-
-    public static void main(String[] args) {
-        Expr expression = new Expr.Binary(
-                new Expr.Unary(new Token(TokenType.MINUS, "-", null, 1), new Expr.Literal(123)),
-                new Token(TokenType.STAR, "*", null, 1), new Expr.Grouping(new Expr.Literal(45.67)));
-                System.out.println(new AstPrinter().print(expression));
-    }
-    
 }

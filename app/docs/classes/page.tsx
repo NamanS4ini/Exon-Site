@@ -64,7 +64,14 @@ p.print(); // Point(10, 20)`}
         Fields on instances are created dynamically upon assignment:
       </p>
       <CodeBlock
-        code={`set p = Point(0, 0);
+        code={`class Point {
+  init(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+set p = Point(0, 0);
 p.z = 5; // Dynamically add field 'z'
 out p.z; // 5`}
         filename="fields.exon"

@@ -216,31 +216,15 @@ a:hover { color: var(--brand-primary-light); }
   background: rgba(255, 255, 255, 0.75);
 }
 
-/* ─── Gradient text ────────────────────────────────────────────────────────── */
+/* ─── Solid brand text ─────────────────────────────────────────────────────── */
 .gradient-text {
-  background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #60a5fa 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: var(--brand-primary-light);
 }
 
-/* ─── Animated gradient border ─────────────────────────────────────────────── */
-.gradient-border {
-  position: relative;
-  border-radius: var(--radius-lg);
+[data-theme="light"] .gradient-text {
+  color: var(--brand-primary-dark);
 }
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--radius-lg) + 1px);
-  background: linear-gradient(135deg, #6366f1, #a78bfa, #60a5fa);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-.gradient-border:hover::before { opacity: 1; }
+
 
 /* ─── Syntax highlight classes ─────────────────────────────────────────────── */
 .token-keyword { color: var(--code-keyword); }

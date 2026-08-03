@@ -106,7 +106,36 @@ public class ExonEngine {
         return ExonResult.success(outputCollector.getOutput(), elapsed);
     }
 
-    private static long elapsed(long startTime) {
-        return System.currentTimeMillis() - startTime;
+    /**
+     * Parses the source code into statements and returns the printed AST tree.
+     */
+    public static ExonResult ast(String source) {
+        long startTime = System.currentTimeMillis();
+
+        if (source == null || source.isBlank()) {
+            return ExonResult.success("", 0);
+        }
+
+        ErrorCollector errorCollector = new ErrorCollector();
+        Scanner scanner = new Scanner(source, errorCollector);
+        List<Token> tokens = scanner.scanTokens();
+
+        if (errorCollector.hasErrors()) {
+            return ExonResult.failure(errorCollector.getErrors(), "", elapsed(startTime));
+        }
+
+        Parser parser = new Parser(tokens, errorCollector);
+        List<Stmt> statements = parser.parse();
+
+        if (errorCollector.hasErrors()) {
+            return ExonResult.failure(errorCollector.getErrors(), "", elapsed(startTime));
+        }
+
+        String printedAst = new AstPrinter().print(statements);
+        return ExonResult.success(printedAst, elapsed(startTime));
+    }
+
+    private static long elapsed(long startTimeMs) {
+        return System.currentTimeMillis() - startTimeMs;
     }
 }

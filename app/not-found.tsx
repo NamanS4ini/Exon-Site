@@ -16,21 +16,6 @@ export default function NotFound() {
         overflow: "hidden",
       }}
     >
-      {/* Background glow */}
-      <div
-        aria-hidden
-        style={{
-          position: "absolute",
-          top: "30%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "500px",
-          height: "300px",
-          background: "radial-gradient(ellipse, rgba(99,102,241,0.1) 0%, transparent 70%)",
-          pointerEvents: "none",
-        }}
-      />
-
       <div className="animate-fade-in" style={{ position: "relative", maxWidth: "480px" }}>
         <div
           className="animate-float"
