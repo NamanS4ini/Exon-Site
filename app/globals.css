@@ -437,19 +437,30 @@ a:hover { color: var(--brand-primary-light); }
   margin: 1.5rem 0;
 }
 
-/* ─── Responsive: hide sidebar on mobile ───────────────────────────────────── */
+/* ─── Responsive Layout Rules ──────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .sidebar-desktop { display: none; }
-  .mobile-menu-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 40;
-    backdrop-filter: blur(4px);
+  #desktop-nav {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: inline-flex !important;
+  }
+  .sidebar-desktop {
+    display: none !important;
+  }
+  .responsive-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+  }
+  .pipeline-grid {
+    grid-template-columns: 1fr !important;
   }
 }
+
 @media (min-width: 769px) {
-  .mobile-nav-panel { display: none !important; }
+  .mobile-nav-panel {
+    display: none !important;
+  }
 }
 
 @theme inline {

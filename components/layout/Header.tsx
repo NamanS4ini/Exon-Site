@@ -5,10 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ThemeToggle } from "./ThemeToggle";
 import { SearchModal } from "@/components/docs/SearchModal";
-import { BookOpen, Code2, GitFork, Search } from "lucide-react";
+import { BookOpen, Code2, GitFork, Search, Menu, X } from "lucide-react";
 
 export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <>
@@ -101,8 +102,67 @@ export function Header() {
             <Link href="/playground" className="btn btn-primary btn-sm" id="header-cta">
               Try It
             </Link>
+
+            {/* Mobile Hamburger Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="btn btn-ghost btn-sm mobile-menu-btn"
+              style={{ padding: "0.4rem", display: "none" }}
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div
+            className="mobile-nav-panel animate-fade-in"
+            style={{
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              background: "var(--bg-surface)",
+              borderBottom: "1px solid var(--border-default)",
+              padding: "1rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              boxShadow: "var(--shadow-md)",
+            }}
+          >
+            <Link
+              href="/docs/introduction"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-ghost btn-sm"
+              style={{ justifyContent: "flex-start", gap: "0.5rem" }}
+            >
+              <BookOpen size={16} />
+              Documentation
+            </Link>
+            <Link
+              href="/playground"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-ghost btn-sm"
+              style={{ justifyContent: "flex-start", gap: "0.5rem" }}
+            >
+              <Code2 size={16} />
+              Interactive Playground
+            </Link>
+            <a
+              href="https://github.com/NamanS4ini/Exon-Site"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost btn-sm"
+              style={{ justifyContent: "flex-start", gap: "0.5rem" }}
+            >
+              <GitFork size={16} />
+              GitHub Repository
+            </a>
+          </div>
+        )}
       </header>
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>

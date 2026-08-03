@@ -311,7 +311,7 @@ export default function PlaygroundPage() {
       </div>
 
       {/* ── Main Split View ─────────────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1, minHeight: 0 }}>
+      <div className="playground-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1, minHeight: 0 }}>
         {/* Left: Code Editor */}
         <div style={{ display: "flex", flexDirection: "column", borderRight: "1px solid var(--border-default)", background: "var(--code-bg)" }}>
           <div style={{ padding: "0.5rem 1rem", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)", fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>

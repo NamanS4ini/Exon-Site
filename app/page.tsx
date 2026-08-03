@@ -118,7 +118,7 @@ export default function HomePage() {
         }}
       >
         <div className="container" style={{ position: "relative" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }}>
+          <div className="responsive-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }}>
             {/* Left: text */}
             <div className="animate-fade-in">
               <div className="badge badge-brand" style={{ marginBottom: "1.25rem" }}>
