@@ -1,23 +1,23 @@
 # ── Stage 1: Build ────────────────────────────────────────────────────────────
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /workspace
 
-# Copy Gradle wrapper + build files first (layer-cache friendly)
-COPY gradlew .
-COPY gradle/ gradle/
-COPY build.gradle .
+# Install Gradle inside the Alpine build container
+RUN apk add --no-cache gradle
+
+# Copy Gradle build configuration files
+COPY build.gradle.kts .
 COPY settings.gradle .
 
-# Download dependencies (cached unless build files change)
-RUN ./gradlew dependencies --no-daemon -q
-
-# Copy source and build the fat JAR
+# Copy source code
 COPY src/ src/
-RUN ./gradlew bootJar --no-daemon -q
+
+# Build the Spring Boot executable fat JAR
+RUN gradle bootJar --no-daemon
 
 # ── Stage 2: Runtime ──────────────────────────────────────────────────────────
-FROM eclipse-temurin:17-jre-alpine AS runtime
+FROM eclipse-temurin:21-jre-alpine AS runtime
 
 WORKDIR /app
 
