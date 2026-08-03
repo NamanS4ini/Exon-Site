@@ -345,7 +345,7 @@ export default function HomePage() {
         }}
       >
         <div className="container">
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start" }}>
+          <div className="responsive-hero-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start" }}>
             <div>
               <h2>Get started in minutes</h2>
               <p style={{ color: "var(--text-secondary)", marginTop: "0.75rem", lineHeight: 1.7 }}>

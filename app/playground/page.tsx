@@ -230,7 +230,7 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", flex: 1, height: "calc(100vh - var(--header-height))" }}>
+    <div className="playground-container" style={{ display: "flex", flexDirection: "column", flex: 1, height: "calc(100vh - var(--header-height))" }}>
       {/* ── Toolbar ─────────────────────────────────────────────────────────── */}
       <div
         style={{
@@ -313,7 +313,7 @@ export default function PlaygroundPage() {
       {/* ── Main Split View ─────────────────────────────────────────────────── */}
       <div className="playground-split" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1, minHeight: 0 }}>
         {/* Left: Code Editor */}
-        <div style={{ display: "flex", flexDirection: "column", borderRight: "1px solid var(--border-default)", background: "var(--code-bg)" }}>
+        <div className="playground-editor-wrap" style={{ display: "flex", flexDirection: "column", borderRight: "1px solid var(--border-default)", background: "var(--code-bg)" }}>
           <div style={{ padding: "0.5rem 1rem", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)", fontSize: "0.75rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
             editor.exon
           </div>
@@ -342,7 +342,7 @@ export default function PlaygroundPage() {
         </div>
 
         {/* Right: Output / Console */}
-        <div style={{ display: "flex", flexDirection: "column", background: "var(--bg-base)" }}>
+        <div className="playground-output-wrap" style={{ display: "flex", flexDirection: "column", background: "var(--bg-base)" }}>
           {/* Tab Header */}
           <div style={{ padding: "0.25rem 0.5rem", background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)", display: "flex", gap: "0.25rem" }}>
             <button

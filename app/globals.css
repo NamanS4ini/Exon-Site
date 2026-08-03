@@ -455,6 +455,22 @@ a:hover { color: var(--brand-primary-light); }
   .pipeline-grid {
     grid-template-columns: 1fr !important;
   }
+  .playground-container {
+    height: auto !important;
+    min-height: calc(100vh - var(--header-height));
+  }
+  .playground-split {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+  }
+  .playground-editor-wrap {
+    height: 380px !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-default) !important;
+  }
+  .playground-output-wrap {
+    min-height: 260px !important;
+  }
 }
 
 @media (min-width: 769px) {
