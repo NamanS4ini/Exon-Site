@@ -31,6 +31,6 @@ USER exon
 # JVM flags: limit heap to 256MB (free-tier friendly), enable G1GC
 ENV JAVA_OPTS="-Xmx256m -Xms64m -XX:+UseG1GC"
 
-EXPOSE 8080
+EXPOSE 8080 10000
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Dserver.port=${PORT:-8080} -jar /app/app.jar"]
