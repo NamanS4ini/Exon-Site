@@ -1,0 +1,20 @@
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: exon-api
+
+# Exon API configuration
+exon:
+  execution:
+    timeout-ms: 5000
+    max-output-lines: 1000
+    max-source-length: 10000
+  rate-limit:
+    requests-per-minute: 30
+  cors:
+    allowed-origins:
+      - "http://localhost:3000"
+      - "https://*.vercel.app"
+      - "*"

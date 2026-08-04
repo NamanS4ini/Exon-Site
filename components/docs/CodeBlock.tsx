@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Copy, Check, Play, ExternalLink, Terminal, AlertCircle, Clock } from "lucide-react";
+import { Copy, Check, Play, ExternalLink, Terminal, AlertCircle, Clock, Loader2, Info } from "lucide-react";
 
 interface CodeBlockProps {
   code: string;
@@ -107,6 +107,7 @@ export function CodeBlock({
 }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [isSlow, setIsSlow] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [executionTime, setExecutionTime] = useState<number | null>(null);
@@ -122,10 +123,15 @@ export function CodeBlock({
 
   async function runCode() {
     setIsRunning(true);
+    setIsSlow(false);
     setOutput(null);
     setErrorDetails(null);
     setHasRun(true);
     const startTime = performance.now();
+
+    const slowTimer = setTimeout(() => {
+      setIsSlow(true);
+    }, 3000);
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/run`, {
@@ -138,7 +144,11 @@ export function CodeBlock({
 
       if (!res.ok) {
         setExecutionTime(elapsed);
-        setErrorDetails(`API Error (${res.status}): ${res.statusText}`);
+        let errTxt = `API Error (${res.status}): ${res.statusText}`;
+        if (API_BASE_URL.includes("onrender.com") || res.status === 502 || res.status === 503 || res.status === 504) {
+          errTxt += `\n\n💡 Tip: The Exon API is hosted on Render free tier, which goes to sleep after inactivity. Cold starts take 30–60 seconds. Please wait a moment and try clicking "Run" again.`;
+        }
+        setErrorDetails(errTxt);
         setIsRunning(false);
         return;
       }
@@ -163,8 +173,14 @@ export function CodeBlock({
       const elapsed = Math.round(performance.now() - startTime);
       setExecutionTime(elapsed);
       const message = err instanceof Error ? err.message : String(err);
-      setErrorDetails(`Connection Error: Ensure Exon API is running at ${API_BASE_URL}.\nDetail: ${message}`);
+      let detailedErr = `Connection Error: Could not connect to Exon API at ${API_BASE_URL}.\nEnsure Spring Boot API is running.\nDetail: ${message}`;
+      if (API_BASE_URL.includes("onrender.com") || message.toLowerCase().includes("networkerror") || message.toLowerCase().includes("failed to fetch")) {
+        detailedErr += `\n\n💡 Tip: Render free tier services sleep after 15 minutes of inactivity and take 30–60s to wake up on cold start. Please wait a moment and try clicking "Run" again.`;
+      }
+      setErrorDetails(detailedErr);
     } finally {
+      clearTimeout(slowTimer);
+      setIsSlow(false);
       setIsRunning(false);
     }
   }
@@ -251,6 +267,38 @@ export function CodeBlock({
               </span>
             )}
           </div>
+
+          {isRunning && !isSlow && (
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-muted)", marginBottom: "0.5rem", fontSize: "0.8rem" }}>
+              <Loader2 size={14} style={{ animation: "spin 1s linear infinite" }} />
+              <span>Executing program...</span>
+            </div>
+          )}
+
+          {isRunning && isSlow && (
+            <div
+              style={{
+                marginBottom: "0.75rem",
+                padding: "0.75rem 0.9rem",
+                borderRadius: "var(--radius-sm)",
+                background: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.3)",
+                color: "var(--text-primary)",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "0.65rem",
+                animation: "fadeIn 0.3s ease-in-out",
+              }}
+            >
+              <Info size={16} style={{ color: "#fbbf24", flexShrink: 0, marginTop: "0.15rem" }} />
+              <div style={{ fontSize: "0.8rem", lineHeight: 1.45 }}>
+                <strong style={{ color: "#fbbf24", display: "block", marginBottom: "0.15rem" }}>
+                  API Server Slow / Waking Up...
+                </strong>
+                The backend API (Render free tier) may be waking up from sleep mode (30–60s). Please wait...
+              </div>
+            </div>
+          )}
 
           {output && (
             <pre style={{ margin: 0, color: "var(--text-primary)", whiteSpace: "pre-wrap" }}>

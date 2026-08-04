@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { Play, RotateCcw, Copy, Share2, Terminal, Check, AlertCircle, Clock, Zap } from "lucide-react";
+import { Play, RotateCcw, Copy, Share2, Terminal, Check, AlertCircle, Clock, Zap, Loader2, Info } from "lucide-react";
 
 // Dynamically import Monaco Editor to avoid SSR hydration issues
 const Editor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
@@ -99,6 +99,7 @@ export default function PlaygroundPage() {
   const [output, setOutput] = useState<string>("");
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [isSlow, setIsSlow] = useState(false);
   const [executionTime, setExecutionTime] = useState<number | null>(null);
   const [status, setStatus] = useState<"idle" | "success" | "error" | "timeout">("idle");
   const [copied, setCopied] = useState(false);
@@ -147,10 +148,15 @@ export default function PlaygroundPage() {
 
   const handleRun = async () => {
     setIsRunning(true);
+    setIsSlow(false);
     setStatus("idle");
     setOutput("");
     setErrorDetails(null);
     const startTime = performance.now();
+
+    const slowTimer = setTimeout(() => {
+      setIsSlow(true);
+    }, 3000);
 
     // Fetch AST concurrently
     fetchAst();
@@ -170,7 +176,11 @@ export default function PlaygroundPage() {
           setErrorDetails("Rate limit exceeded: 30 requests per minute limit.");
         } else {
           setStatus("error");
-          setErrorDetails(`HTTP ${res.status}: ${res.statusText}`);
+          let errTxt = `HTTP ${res.status}: ${res.statusText}`;
+          if (API_BASE_URL.includes("onrender.com") || res.status === 502 || res.status === 503 || res.status === 504) {
+            errTxt += `\n\n💡 Tip: The Exon API is hosted on Render free tier, which goes to sleep after inactivity. Cold starts take 30–60 seconds. Please wait a moment and click "Run Code" again.`;
+          }
+          setErrorDetails(errTxt);
         }
         setExecutionTime(elapsed);
         setIsRunning(false);
@@ -200,11 +210,18 @@ export default function PlaygroundPage() {
       setExecutionTime(elapsed);
       setStatus("error");
       const message = err instanceof Error ? err.message : String(err);
-      setErrorDetails(`Connection Error: Could not connect to Exon API at ${API_BASE_URL}.\nEnsure Spring Boot API is running.\nDetail: ${message}`);
+      let detailedMsg = `Connection Error: Could not connect to Exon API at ${API_BASE_URL}.\nEnsure Spring Boot API is running.\nDetail: ${message}`;
+      if (API_BASE_URL.includes("onrender.com") || message.toLowerCase().includes("networkerror") || message.toLowerCase().includes("failed to fetch")) {
+        detailedMsg += `\n\n💡 Tip: The Exon API is hosted on Render free tier, which goes to sleep after inactivity. It takes 30–60 seconds to wake up (cold start). Please wait a moment and click "Run Code" again once the server is awake.`;
+      }
+      setErrorDetails(detailedMsg);
     } finally {
+      clearTimeout(slowTimer);
+      setIsSlow(false);
       setIsRunning(false);
     }
   };
+
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -391,9 +408,39 @@ export default function PlaygroundPage() {
           <div style={{ flex: 1, padding: "1.25rem", overflowY: "auto", fontFamily: "var(--font-mono)", fontSize: "0.875rem", lineHeight: 1.75 }}>
             {activeTab === "output" ? (
               <>
-                {status === "idle" && !output && !errorDetails && (
+                {status === "idle" && !output && !errorDetails && !isRunning && (
                   <div style={{ color: "var(--text-muted)", fontStyle: "italic" }}>
                     Click &quot;Run Code&quot; to execute your Exon program.
+                  </div>
+                )}
+                {isRunning && !isSlow && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-muted)", marginBottom: "0.85rem", fontSize: "0.825rem" }}>
+                    <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} />
+                    <span>Executing Exon code...</span>
+                  </div>
+                )}
+                {isRunning && isSlow && (
+                  <div
+                    style={{
+                      marginBottom: "1rem",
+                      padding: "0.85rem 1rem",
+                      borderRadius: "var(--radius-md)",
+                      background: "rgba(245, 158, 11, 0.1)",
+                      border: "1px solid rgba(245, 158, 11, 0.3)",
+                      color: "var(--text-primary)",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "0.75rem",
+                      animation: "fadeIn 0.3s ease-in-out",
+                    }}
+                  >
+                    <Info size={18} style={{ color: "#fbbf24", flexShrink: 0, marginTop: "0.15rem" }} />
+                    <div style={{ fontSize: "0.825rem", lineHeight: 1.5 }}>
+                      <strong style={{ color: "#fbbf24", display: "block", marginBottom: "0.2rem" }}>
+                        API server is waking up (Cold Start)...
+                      </strong>
+                      The Exon API backend hosted on Render (free tier) goes to sleep after inactivity. It takes around 30–60 seconds to spin up. Please wait...
+                    </div>
                   </div>
                 )}
                 {output && (
