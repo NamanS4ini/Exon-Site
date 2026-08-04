@@ -14,7 +14,7 @@ interface CodeBlockProps {
   runnable?: boolean;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://exon-api.onrender.com";
 
 /** Tokenises Exon source code into HTML spans for syntax highlighting. */
 function tokenise(code: string): React.ReactNode[] {
